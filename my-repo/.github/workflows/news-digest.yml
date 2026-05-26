@@ -2,9 +2,8 @@ name: News Digest Automation
 
 on:
   schedule:
-    # 毎日朝6時（JTC）に実行
     - cron: '0 21 * * *'
-  workflow_dispatch:  # 手動実行も可能
+  workflow_dispatch:
 
 jobs:
   news-digest:
