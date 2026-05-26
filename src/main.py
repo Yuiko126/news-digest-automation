@@ -5,7 +5,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import feedparser
 import google.generativeai as genai
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 # 設定
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -90,6 +90,8 @@ def summarize_with_gemini(articles):
 
 def create_email_body(summaries):
     """メール本文をHTML形式で生成"""
+    jst = timezone(timedelta(hours=9))
+    now_jst = datetime.now(jst)
     html = f"""
     <html>
     <head>
@@ -105,7 +107,7 @@ def create_email_body(summaries):
     </head>
     <body>
     <h1>📰 今朝のニュースまとめ</h1>
-    <p>生成日時: {datetime.now().strftime('%Y年%m月%d日 %H:%M')}</p>
+    <p>生成日時: {now_jst.strftime('%Y年%m月%d日 %H:%M')}</p>
     """
     
     for category, items in summaries.items():
@@ -131,7 +133,7 @@ def send_email(html_body):
     """Gmailでメールを送信"""
     try:
         msg = MIMEMultipart("alternative")
-        msg["Subject"] = f"📰 ニュースまとめ {datetime.now().strftime('%Y年%m月%d日')}"
+        msg["Subject"] = f"📰 ニュースまとめ {now_jst.strftime('%Y年%m月%d日')}"
         msg["From"] = GMAIL_ADDRESS
         msg["To"] = GMAIL_ADDRESS
         
